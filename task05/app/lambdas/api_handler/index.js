@@ -23,7 +23,7 @@ export const handler = async (event) => {
       new PutCommand({
         TableName: "Events",
         Item: {
-          n: eventId,
+          id: eventId,
           principalId: requestBody.principalId,
           createdAt: createdAt,
           body: requestBody.content,
