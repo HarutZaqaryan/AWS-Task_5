@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 // const client = new DynamoDBClient({});
 // const docClient = new AWS.DynamoDB.DocumentClient()
 const docClient = new AWS.DynamoDB.DocumentClient();
+const tableName = process.env.target_table || "Events"
 
 export const handler = async (event) => {
   console.log("~~~EVENT~~~ ", event);
@@ -22,7 +23,7 @@ export const handler = async (event) => {
   console.log("~~~Date~~~ ", createdAt);
 
   const params = {
-    TableName: "Events",
+    TableName: tableName,
     Item: {
       id: eventId,
       principalId: requestBody.principalId,
