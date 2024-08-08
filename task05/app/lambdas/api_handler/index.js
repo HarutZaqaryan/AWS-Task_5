@@ -1,13 +1,18 @@
 // import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 // import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import AWS from "aws-sdk";
-
-import { v4 as uuidv4 } from "uuid";
-
 // const client = new DynamoDBClient({});
 // const docClient = new AWS.DynamoDB.DocumentClient()
+
+
+import AWS from "aws-sdk";
+import { v4 as uuidv4 } from "uuid";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const docClient = new AWS.DynamoDB.DocumentClient();
-const tableName = process.env.target_table || "Events"
+const tableName = process.env.target_table || "Events";
+console.log("~~~TableName~~~ ", tableName);
 
 export const handler = async (event) => {
   console.log("~~~EVENT~~~ ", event);
