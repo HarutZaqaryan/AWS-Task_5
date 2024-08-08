@@ -1,9 +1,12 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+// import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+// import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import AWS from 'aws-sdk';
+
 import { v4 as uuidv4 } from "uuid";
 
-const client = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(client);
+// const client = new DynamoDBClient({});
+// const docClient = new AWS.DynamoDB.DocumentClient()
+const docClient = new AWS.DynamoDB.DocumentClient();
 
 export const handler = async (event) => {
   console.log("~~~EVENT~~~ ", event);
@@ -18,18 +21,21 @@ export const handler = async (event) => {
   const createdAt = new Date().toISOString();
   console.log("~~~Date~~~ ", createdAt);
 
+  const params = {
+    TableName: "Events",
+    Item: {
+      id: eventId,
+      principalId: requestBody.principalId,
+      createdAt: createdAt,
+      body: requestBody.content,
+    },
+  };
+
   try {
-    await docClient.send(
-      new PutCommand({
-        TableName: "Events",
-        Item: {
-          id: eventId,
-          principalId: requestBody.principalId,
-          createdAt: createdAt,
-          body: requestBody.content,
-        },
-      })
-    );
+   docClient.put(params, (err, data) => {
+      if (err) console.log("err from put", err);
+      else console.log("data from put", data);
+    });
     const res = {
       statusCode: 201,
       body: JSON.stringify({
@@ -44,15 +50,12 @@ export const handler = async (event) => {
 
     console.log("~~~Res~~~ ", res);
     return res;
-
   } catch (error) {
-
     console.log("~~~Error~~~ ", error);
 
     return {
       statusCode: 500,
       body: JSON.stringify({ message: "Could not save event to DynamoDB" }),
     };
-
   }
 };
