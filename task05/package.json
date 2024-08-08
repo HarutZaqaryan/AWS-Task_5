@@ -1,0 +1,7 @@
+{
+  "type":"module",
+  "dependencies": {
+    "aws-sdk": "^2.1669.0",
+    "uuid": "^10.0.0"
+  }
+}
