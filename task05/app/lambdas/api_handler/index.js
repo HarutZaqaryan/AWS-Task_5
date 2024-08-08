@@ -1,6 +1,6 @@
 // import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 // import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import AWS from 'aws-sdk';
+import AWS from "aws-sdk";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -32,10 +32,8 @@ export const handler = async (event) => {
   };
 
   try {
-   docClient.put(params, (err, data) => {
-      if (err) console.log("err from put", err);
-      else console.log("data from put", data);
-    });
+    const data = await docClient.put(params).promise();
+
     const res = {
       statusCode: 201,
       body: JSON.stringify({
