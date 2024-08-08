@@ -3,12 +3,8 @@
 // const client = new DynamoDBClient({});
 // const docClient = new AWS.DynamoDB.DocumentClient()
 
-
 import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.target_table || "Events";
@@ -40,26 +36,23 @@ export const handler = async (event) => {
   try {
     const data = await docClient.put(params).promise();
 
-    const res = {
+    const res = JSON.stringify({
       statusCode: 201,
-      body: JSON.stringify({
-        event: {
-          id: eventId,
-          principalId: requestBody.principalId,
-          createdAt: createdAt,
-          body: requestBody.content,
-        },
-      }),
-    };
-
+      event: {
+        id: eventId,
+        principalId: requestBody.principalId,
+        createdAt: createdAt,
+        body: requestBody.content,
+      },
+    });
     console.log("~~~Res~~~ ", res);
     return res;
   } catch (error) {
     console.log("~~~Error~~~ ", error);
 
-    return {
+    return JSON.stringify({
       statusCode: 500,
-      body: JSON.stringify({ message: "Could not save event to DynamoDB" }),
-    };
+      message: "Could not save event to DynamoDB",
+    });
   }
 };
