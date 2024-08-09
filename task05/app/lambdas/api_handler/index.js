@@ -17,6 +17,9 @@ export const handler = async (event) => {
   const requestBody = JSON.parse(event.body);
   console.log("~~~Request Body~~~ ", requestBody);
 
+  console.log("~~~JSON Stringified~~~",JSON.stringify(requestBody));
+  
+
   const eventId = uuidv4();
   console.log("~~~Event ID~~~ ", eventId);
 
@@ -35,6 +38,8 @@ export const handler = async (event) => {
 
   try {
     const data = await docClient.put(params).promise();
+
+    console.log("~~~Data~~~",data)
 
     const res = JSON.stringify({
       statusCode: 201,
