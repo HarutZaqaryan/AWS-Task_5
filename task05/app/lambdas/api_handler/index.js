@@ -69,43 +69,42 @@ import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 
 const docClient = new AWS.DynamoDB.DocumentClient();
-const tableName = process.env.target_table || "Events";
+const tableName = process.env.target_table || "cmtr-954a4fcc-Events-test";
 console.log("~~~TableName~~~ ", tableName);
 
 export const handler = async (event) => {
   console.log("~~~EVENT~~~ ", event);
 
   const prId = event.principalId;
-  console.log("~~~ID~~~ ", prId);
+  console.log("~~~Principal ID From event~~~ ", prId);
 
   const requestBody = event.content;
-  console.log("~~~Request Body~~~ ", requestBody);
+  console.log("~~~Request Body(event.content)~~~ ", requestBody);
 
   const eventId = uuidv4();
-  console.log("~~~Event ID~~~ ", eventId);
+  console.log("~~~UUID~~~ ", eventId);
 
   const createdAt = new Date().toISOString();
-  console.log("~~~Date~~~ ", createdAt);
+  console.log("~~~Created At~~~ ", createdAt);
 
 
-  console.log("~~~JSON parsed event content~~~",JSON.parse(event.content));
-  console.log("~~~JSON parsed event content typeof~~~", typeof JSON.parse(event.content));
-  console.log("~~~JSON parsed id~~~",JSON.parse(event).principalId);
-  console.log("~~~JSON parsed id typeof~~~",typeof JSON.parse(event).principalId);
+  // console.log("~~~JSON parsed event content~~~",JSON.parse(event.content));
+  // console.log("~~~JSON parsed event content typeof~~~", typeof JSON.parse(event.content));
+  // console.log("~~~JSON parsed id~~~",JSON.parse(event).principalId);
+  // console.log("~~~JSON parsed id typeof~~~",typeof JSON.parse(event).principalId);
   
-  console.log("~~~JSON stringified event content~~~",JSON.stringify(event.content));
-  console.log("~~~JSON stringified event content typeof~~~", typeof JSON.stringify(event.content));
-  console.log("~~~JSON stringified id~~~",JSON.stringify(event).principalId);
-  console.log("~~~JSON stringified id typeof~~~",typeof JSON.stringify(event).principalId);
+  // console.log("~~~JSON stringified event content~~~",JSON.stringify(event.content));
+  // console.log("~~~JSON stringified event content typeof~~~", typeof JSON.stringify(event.content));
+  // console.log("~~~JSON stringified id~~~",JSON.stringify(event).principalId);
+  // console.log("~~~JSON stringified id typeof~~~",typeof JSON.stringify(event).principalId);
 
   const params = {
     TableName: tableName,
     Item: {
       id: eventId,
-      // principalId: prId,
-      principalId: JSON.parse(event).principalId,
+      principalId: event.principalId,
       createdAt: createdAt,
-      body: JSON.stringify(event).content,
+      body: event.content,
     },
   };
   console.log("~~~Params~~~",params)
@@ -117,12 +116,7 @@ export const handler = async (event) => {
 
     const res = JSON.stringify({
       statusCode: 201,
-      event: {
-        id: eventId,
-        principalId: prId,
-        createdAt: createdAt,
-        body: requestBody,
-      },
+      event:JSON.stringify(params.Item),
     });
 
     console.log("~~~Res~~~ ", res);
