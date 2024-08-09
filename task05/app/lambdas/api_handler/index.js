@@ -12,12 +12,14 @@ console.log("~~~TableName~~~ ", tableName);
 
 export const handler = async (event) => {
   console.log("~~~EVENT~~~ ", event);
-  console.log("~~~EVENT BODY~~~ ", event.body);
+  // console.log("~~~EVENT BODY~~~ ", event.body);
 
-  const requestBody = JSON.parse(event.body);
+  const prId = event.principalId;
+  const requestBody = event.content;
   console.log("~~~Request Body~~~ ", requestBody);
+  console.log("~~~ID~~~ ", prId);
 
-  console.log("~~~JSON Stringified~~~",JSON.stringify(requestBody));
+  // console.log("~~~JSON Stringified~~~",JSON.stringify(requestBody));
   
 
   const eventId = uuidv4();
@@ -30,9 +32,11 @@ export const handler = async (event) => {
     TableName: tableName,
     Item: {
       id: eventId,
-      principalId: requestBody.principalId,
+      principalId: prId,
+      // principalId: requestBody.principalId,
       createdAt: createdAt,
-      body: requestBody.content,
+      // body: requestBody.content,
+      body: requestBody,
     },
   };
 
