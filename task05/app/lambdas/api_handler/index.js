@@ -139,15 +139,13 @@ export const handler = async (event) => {
     // const requestBody = JSON.parse(event.body);
     // console.log("~~~Request Body in try~~~ ", requestBody);
 
-    console.log("~~~Data~~~", data);
-
     const res = JSON.stringify({
       statusCode: 201,
       event: {
         id: eventId,
-        // principalId: requestBody.principalId,
+        principalId: event.principalId,
         createdAt: createdAt,
-        // body: requestBody.content,
+        body: event.content,
       },
     });
 
