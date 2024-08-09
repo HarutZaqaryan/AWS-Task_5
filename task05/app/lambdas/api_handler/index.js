@@ -16,10 +16,10 @@ export const handler = async (event) => {
 
   const prId = event.principalId;
   const requestBody = event.content;
-  console.log("~~~Request Body~~~ ", requestBody);
   console.log("~~~ID~~~ ", prId);
+  console.log("~~~Request Body~~~ ", requestBody);
 
-  // console.log("~~~JSON Stringified~~~",JSON.stringify(requestBody));
+  console.log("~~~JSON Stringified request body~~~",JSON.stringify(requestBody));
   
 
   const eventId = uuidv4();
@@ -39,6 +39,7 @@ export const handler = async (event) => {
       body: requestBody,
     },
   };
+  console.log("~~~Params~~~",params)
 
   try {
     const data = await docClient.put(params).promise();
@@ -49,9 +50,11 @@ export const handler = async (event) => {
       statusCode: 201,
       event: {
         id: eventId,
-        principalId: requestBody.principalId,
+        // principalId: requestBody.principalId,
+        principalId: prId,
         createdAt: createdAt,
-        body: requestBody.content,
+        // body: requestBody.content,
+        body: requestBody,
       },
     });
     console.log("~~~Res~~~ ", res);
