@@ -110,34 +110,24 @@ export const handler = async (event) => {
   const createdAt = new Date().toISOString();
   console.log("~~~Created At~~~ ", createdAt);
 
-  // console.log("~~~JSON parsed event content~~~",JSON.parse(event.content));
-  // console.log("~~~JSON parsed event content typeof~~~", typeof JSON.parse(event.content));
-  // console.log("~~~JSON parsed id~~~",JSON.parse(event).principalId);
-  // console.log("~~~JSON parsed id typeof~~~",typeof JSON.parse(event).principalId);
-
-  // console.log("~~~JSON stringified event content~~~",JSON.stringify(event.content));
-  // console.log("~~~JSON stringified event content typeof~~~", typeof JSON.stringify(event.content));
-  // console.log("~~~JSON stringified id~~~",JSON.stringify(event).principalId);
-  // console.log("~~~JSON stringified id typeof~~~",typeof JSON.stringify(event).principalId);
-
   const params = {
     TableName: tableName,
     Item: {
       id: eventId,
       principalId: event.principalId,
-      // principalId: validJson.principalId,
       createdAt: createdAt,
       body: event.content,
-      // body: validJson.content,
     },
   };
+
   console.log("~~~Params~~~", params);
 
   try {
     const data = await docClient.put(params).promise();
     console.log("~~~EVENT in try~~~ ", event);
-    // const requestBody = JSON.parse(event.body);
-    // console.log("~~~Request Body in try~~~ ", requestBody);
+    console.log("~~~typeof EVENT in try~~~ ", typeof event);
+    console.log("~~~typeof EVENT.CONTENT in try~~~ ", typeof event.content);
+   
 
     const res = JSON.stringify({
       statusCode: 201,
@@ -160,6 +150,3 @@ export const handler = async (event) => {
     });
   }
 };
-
-// Expected: {\"statusCode\": 201, \"event\": {\"id\": \"UUID v4\", \"principalId\": \"int\", \"createdAt\": \"date time in ISO 8601 formatted string(2024-01-01T00:00:00.000Z|2024-01-01T00:00:00.000000)\", \"body\": \"any map '{' content '}'\"}};
-// Actual:   {\"statusCode\": 201, \"event\": {\"id\": \"27b7b8eb-6d5a-454b-97cf-e4d090e8d993\",\"principalId\":10,\"createdAt\":\"2024-08-09T11:57:40.963Z\",\"body\":{\"param1\":\"value1\",\"param2\":\"value2\"}}}"
