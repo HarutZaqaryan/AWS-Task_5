@@ -74,15 +74,12 @@ console.log("~~~TableName~~~ ", tableName);
 
 export const handler = async (event) => {
   console.log("~~~EVENT~~~ ", event);
-  // console.log("~~~EVENT BODY~~~ ", event.body);
 
   const prId = event.principalId;
-  const requestBody = event.content;
   console.log("~~~ID~~~ ", prId);
-  console.log("~~~Request Body~~~ ", requestBody);
 
-  console.log("~~~JSON Stringified request body~~~",JSON.stringify(requestBody));
-  
+  const requestBody = event.content;
+  console.log("~~~Request Body~~~ ", requestBody);
 
   const eventId = uuidv4();
   console.log("~~~Event ID~~~ ", eventId);
@@ -90,15 +87,25 @@ export const handler = async (event) => {
   const createdAt = new Date().toISOString();
   console.log("~~~Date~~~ ", createdAt);
 
+
+  console.log("~~~JSON parsed event content~~~",JSON.parse(event.content));
+  console.log("~~~JSON parsed event content typeof~~~", typeof JSON.parse(event.content));
+  console.log("~~~JSON parsed id~~~",JSON.parse(event).principalId);
+  console.log("~~~JSON parsed id typeof~~~",typeof JSON.parse(event).principalId);
+  
+  console.log("~~~JSON stringified event content~~~",JSON.stringify(event.content));
+  console.log("~~~JSON stringified event content typeof~~~", typeof JSON.stringify(event.content));
+  console.log("~~~JSON stringified id~~~",JSON.stringify(event).principalId);
+  console.log("~~~JSON stringified id typeof~~~",typeof JSON.stringify(event).principalId);
+
   const params = {
     TableName: tableName,
     Item: {
       id: eventId,
-      principalId: prId,
-      // principalId: requestBody.principalId,
+      // principalId: prId,
+      principalId: JSON.parse(event).principalId,
       createdAt: createdAt,
-      // body: requestBody.content,
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(event).content,
     },
   };
   console.log("~~~Params~~~",params)
@@ -112,13 +119,12 @@ export const handler = async (event) => {
       statusCode: 201,
       event: {
         id: eventId,
-        // principalId: requestBody.principalId,
         principalId: prId,
         createdAt: createdAt,
-        // body: requestBody.content,
-        body: JSON.stringify(requestBody),
+        body: requestBody,
       },
     });
+
     console.log("~~~Res~~~ ", res);
     return res;
   } catch (error) {
