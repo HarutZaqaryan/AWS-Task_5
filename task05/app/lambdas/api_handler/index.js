@@ -68,7 +68,7 @@ import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 
 const docClient = new AWS.DynamoDB.DocumentClient();
-const tableName = process.env.target_table || "cmtr-954a4fcc-Events-test";
+const tableName = process.env.target_table || "Events";
 console.log("~~~TableName~~~ ", tableName);
 console.log("~~~TableName from env~~~ ", process.env.target_table);
 
@@ -98,7 +98,7 @@ export const handler = async (event) => {
   // console.log("~~~JSON stringified id typeof~~~",typeof JSON.stringify(event).principalId);
 
   const params = {
-    TableName: "cmtr-954a4fcc-Events-test",
+    TableName: tableName,
     Item: {
       id: eventId,
       principalId: event.principalId,
