@@ -75,10 +75,25 @@ console.log("~~~TableName from env~~~ ", process.env.target_table);
 export const handler = async (event) => {
   console.log("~~~EVENT~~~ ", event);
 
-  const prId = event.principalId;
+  console.log("~~~Event Body~~~", event.body);
+  console.log("~~~Event Body Type~~~", typeof event.body);
+
+  // const eBodyParsed = JSON.parse(event.body);
+  // console.log("~~~eBodyParsed~~~", eBodyParsed);
+  // console.log("~~~eBodyParsed type~~~", typeof eBodyParsed);
+  const validJson = JSON.parse(event.body.replace(/\\r\\n|\r\n|\n/g, ''));
+  console.log("~~~Valid Json",validJson);
+  console.log("~~~Valid Json",typeof validJson);
+  
+
+  // const prId = event.principalId;
+  // console.log("~~~Principal ID From event~~~ ", prId);
+  const prId = validJson.principalId;
   console.log("~~~Principal ID From event~~~ ", prId);
 
-  const requestBody = event.content;
+  // const requestBody = event.content;
+  // console.log("~~~Request Body(event.content)~~~ ", requestBody);
+  const requestBody = validJson.content;
   console.log("~~~Request Body(event.content)~~~ ", requestBody);
 
   const eventId = uuidv4();
@@ -101,17 +116,19 @@ export const handler = async (event) => {
     TableName: tableName,
     Item: {
       id: eventId,
-      principalId: event.principalId,
+      // principalId: event.principalId,
+      principalId: validJson.principalId,
       createdAt: createdAt,
-      body: event.content,
+      // body: event.content,
+      body: validJson.content,
     },
   };
   console.log("~~~Params~~~", params);
 
   try {
     const data = await docClient.put(params).promise();
-    const requestBody = JSON.parse(event.body);
     console.log("~~~EVENT in try~~~ ", event);
+    const requestBody = JSON.parse(event.body);
     console.log("~~~Request Body in try~~~ ", requestBody);
 
     console.log("~~~Data~~~", data);
