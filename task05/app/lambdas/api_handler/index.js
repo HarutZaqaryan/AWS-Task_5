@@ -3,7 +3,7 @@
 // const client = new DynamoDBClient({});
 // const docClient = new AWS.DynamoDB.DocumentClient()
 
-// 
+//
 
 // import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 // import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
@@ -64,13 +64,13 @@
 //   }
 // };
 
-
 import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.target_table || "cmtr-954a4fcc-Events-test";
 console.log("~~~TableName~~~ ", tableName);
+console.log("~~~TableName from env~~~ ", process.env.target_table);
 
 export const handler = async (event) => {
   console.log("~~~EVENT~~~ ", event);
@@ -87,19 +87,18 @@ export const handler = async (event) => {
   const createdAt = new Date().toISOString();
   console.log("~~~Created At~~~ ", createdAt);
 
-
   // console.log("~~~JSON parsed event content~~~",JSON.parse(event.content));
   // console.log("~~~JSON parsed event content typeof~~~", typeof JSON.parse(event.content));
   // console.log("~~~JSON parsed id~~~",JSON.parse(event).principalId);
   // console.log("~~~JSON parsed id typeof~~~",typeof JSON.parse(event).principalId);
-  
+
   // console.log("~~~JSON stringified event content~~~",JSON.stringify(event.content));
   // console.log("~~~JSON stringified event content typeof~~~", typeof JSON.stringify(event.content));
   // console.log("~~~JSON stringified id~~~",JSON.stringify(event).principalId);
   // console.log("~~~JSON stringified id typeof~~~",typeof JSON.stringify(event).principalId);
 
   const params = {
-    TableName: tableName,
+    TableName: "cmtr-954a4fcc-Events-test",
     Item: {
       id: eventId,
       principalId: event.principalId,
@@ -107,16 +106,24 @@ export const handler = async (event) => {
       body: event.content,
     },
   };
-  console.log("~~~Params~~~",params)
+  console.log("~~~Params~~~", params);
 
   try {
     const data = await docClient.put(params).promise();
+    const requestBody = JSON.parse(event.body);
+    console.log("~~~EVENT in try~~~ ", event);
+    console.log("~~~Request Body in try~~~ ", requestBody);
 
-    console.log("~~~Data~~~",data)
+    console.log("~~~Data~~~", data);
 
     const res = JSON.stringify({
       statusCode: 201,
-      event:JSON.stringify(params.Item),
+      event: {
+        id: eventId,
+        principalId: requestBody.principalId,
+        createdAt: createdAt,
+        body: requestBody.content,
+      },
     });
 
     console.log("~~~Res~~~ ", res);
@@ -131,6 +138,5 @@ export const handler = async (event) => {
   }
 };
 
-
-// Expected: {\"statusCode\": 201, \"event\": {\"id\": \"UUID v4\", \"principalId\": \"int\", \"createdAt\": \"date time in ISO 8601 formatted string(2024-01-01T00:00:00.000Z|2024-01-01T00:00:00.000000)\", \"body\": \"any map '{' content '}'\"}}; 
+// Expected: {\"statusCode\": 201, \"event\": {\"id\": \"UUID v4\", \"principalId\": \"int\", \"createdAt\": \"date time in ISO 8601 formatted string(2024-01-01T00:00:00.000Z|2024-01-01T00:00:00.000000)\", \"body\": \"any map '{' content '}'\"}};
 // Actual:   {\"statusCode\": 201, \"event\": {\"id\": \"27b7b8eb-6d5a-454b-97cf-e4d090e8d993\",\"principalId\":10,\"createdAt\":\"2024-08-09T11:57:40.963Z\",\"body\":{\"param1\":\"value1\",\"param2\":\"value2\"}}}"
