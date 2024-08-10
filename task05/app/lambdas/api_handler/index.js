@@ -129,7 +129,7 @@ export const handler = async (event) => {
     console.log("~~~typeof EVENT.CONTENT in try~~~ ", typeof event.content);
    
 
-    const res = JSON.stringify({
+    const res = {
       statusCode: 201,
       event: {
         id: eventId,
@@ -137,7 +137,7 @@ export const handler = async (event) => {
         createdAt: createdAt,
         body: event.content,
       },
-    });
+    };
 
     console.log("~~~Res~~~ ", res);
     return res;
